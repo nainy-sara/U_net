@@ -59,7 +59,7 @@ def display(display_list, save_path="output.png"):
         plt.axis("off")
     plt.savefig(save_path, bbox_inches='tight')
     plt.close()
-    print(f"✅ تصویر در {save_path} ذخیره شد. آن را در Explorer باز کنید.")
+    print(f"✅ Image saved at {save_path}. Open it in Explorer.")
 
 sample_batch = next(iter(train_batches))
 random_index = np.random.choice(sample_batch[0].shape[0])
@@ -85,7 +85,7 @@ def upsample_block(x, conv_features, n_filters):
     return x
 
 # ============================================================
-# ساخت مدل U-Net
+# Building U-Net Model
 # ============================================================
 def build_unet_model():
     inputs = layers.Input(shape=(128, 128, 3))
@@ -112,15 +112,15 @@ def build_unet_model():
     return model
 
 # ============================================================
-# ساخت مدل (اجرای تابع)
+# Building Model (Execute Function)
 # ============================================================
 unet_model = build_unet_model()
-unet_model.summary()  # نمایش خلاصه مدل
+unet_model.summary()  # Display model summary
 
 
 
 # ============================================================
-# کامپایل مدل
+# Compile Model
 # ============================================================
 unet_model.compile(
     optimizer=tf.keras.optimizers.Adam(),
@@ -129,7 +129,7 @@ unet_model.compile(
 )
 
 # ============================================================
-# تنظیمات آموزش
+# Training Settings
 # ============================================================
 NUM_EPOCHS = 20
 
@@ -141,14 +141,14 @@ TEST_LENGTH = info.splits["test"].num_examples
 VALIDATION_STEPS = TEST_LENGTH // BATCH_SIZE // VAL_SUBSPLITS
 
 # ============================================================
-# آموزش مدل
+# Train Model
 # ============================================================
 model_history = unet_model.fit(
     train_batches,
     epochs=NUM_EPOCHS,
     steps_per_epoch=STEPS_PER_EPOCH,
     validation_steps=VALIDATION_STEPS,
-    validation_data=validation_batches  # اگر validation_batches تعریف کرده‌ای
+    validation_data=validation_batches  # if you have defined validation_batches
 )
 
 def create_mask(pred_mask):
