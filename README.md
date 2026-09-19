@@ -1,94 +1,94 @@
-# U-Net برای قطعه‌بندی تصاویر حیوانات خانگی
+# U-Net for Pet Image Segmentation
 
-این پروژه یک مدل **U-Net** را با استفاده از TensorFlow و Keras برای قطعه‌بندی معنایی تصاویر مجموعه‌داده‌ی [Oxford-IIIT Pet](https://www.robots.ox.ac.uk/~vgg/data/pets/) پیاده‌سازی می‌کند.
+This project implements a **U-Net** model using TensorFlow and Keras for semantic segmentation on the [Oxford-IIIT Pet](https://www.robots.ox.ac.uk/~vgg/data/pets/) dataset.
 
-مدل تصویر حیوان خانگی را دریافت کرده و برای هر پیکسل یکی از سه کلاس زیر را پیش‌بینی می‌کند:
+The model receives an image of a pet and predicts one of the following three classes for each pixel:
 
-- پس‌زمینه
-- مرز حیوان
-- خود حیوان
+- Background
+- Pet boundary
+- Pet
 
-## قابلیت‌ها
+## Features
 
-- دریافت خودکار مجموعه‌داده از طریق TensorFlow Datasets
-- تغییر اندازه‌ی تصاویر و ماسک‌ها به `128×128`
-- نرمال‌سازی تصاویر به بازه‌ی `[0, 1]`
-- افزایش داده با Flip افقی تصادفی
-- استفاده از معماری Encoder–Decoder مدل U-Net
-- آموزش با تابع هزینه‌ی `sparse_categorical_crossentropy`
-- نمایش تصویر ورودی، ماسک واقعی و ماسک پیش‌بینی‌شده
-- ذخیره‌ی تصاویر خروجی در فایل `output.png`
+- Automatically downloads the dataset through TensorFlow Datasets
+- Resizes images and masks to `128×128`
+- Normalizes images to the `[0, 1]` range
+- Applies random horizontal flipping for data augmentation
+- Uses the U-Net encoder–decoder architecture
+- Trains with the `sparse_categorical_crossentropy` loss function
+- Displays the input image, ground-truth mask, and predicted mask
+- Saves output images to `output.png`
 
-## ساختار پروژه
+## Project Structure
 
-در حال حاضر فایل اصلی پروژه:
+The main project file is currently:
 
 ```text
 .
 └── U_net2.py
 ```
 
-## پیش‌نیازها
+## Requirements
 
-برای اجرای پروژه، Python نسخه‌ی 3.8 یا بالاتر و بسته‌های زیر نیاز است:
+To run this project, you need Python 3.8 or later and the following packages:
 
 - TensorFlow
 - TensorFlow Datasets
 - NumPy
 - Matplotlib
 
-نصب وابستگی‌ها:
+Install the dependencies with:
 
 ```bash
 pip install tensorflow tensorflow-datasets numpy matplotlib
 ```
 
-> برای استفاده از GPU، نسخه‌ی TensorFlow سازگار با سیستم و درایورهای CUDA را نصب کنید.
+> To use a GPU, install a TensorFlow version compatible with your system and CUDA drivers.
 
-## اجرا
+## Usage
 
-مخزن را دریافت کنید و وارد پوشه‌ی پروژه شوید:
+Clone the repository and move into the project directory:
 
 ```bash
 git clone https://github.com/nainy-sara/U_net.git
 cd U_net
 ```
 
-سپس اسکریپت را اجرا کنید:
+Then run the script:
 
 ```bash
 python U_net2.py
 ```
 
-در اولین اجرا، مجموعه‌داده‌ی `oxford_iiit_pet:4.0.0` به‌صورت خودکار دانلود می‌شود. بنابراین اتصال اینترنت و فضای کافی برای ذخیره‌ی داده‌ها لازم است.
+On the first run, the `oxford_iiit_pet:4.0.0` dataset will be downloaded automatically. An internet connection and sufficient storage space are therefore required.
 
-## روند پردازش داده‌ها
+## Data Processing Pipeline
 
-### آموزش
+### Training
 
-برای داده‌های آموزشی، مراحل زیر انجام می‌شود:
+The following steps are applied to the training data:
 
-1. دریافت تصویر و ماسک سگمنتیشن
-2. تغییر اندازه به `128×128`
-3. اعمال Flip افقی تصادفی
-4. تبدیل مقدار پیکسل تصویر به نوع `float32`
-5. نرمال‌سازی تصویر بر عدد `255`
-6. انتقال برچسب‌های ماسک از بازه‌ی اصلی به کلاس‌های `0` تا `2`
+1. Load the image and segmentation mask
+2. Resize them to `128×128`
+3. Apply a random horizontal flip
+4. Convert image pixel values to `float32`
+5. Normalize image values by dividing them by `255`
+6. Convert the original mask labels to classes from `0` to `2`
 
-### اعتبارسنجی و آزمون
+### Validation and Testing
 
-داده‌های آزمون بدون افزایش داده پردازش می‌شوند. بخشی از داده‌ها برای اعتبارسنجی و بخش دیگری برای آزمون استفاده می‌شود.
+The test data is processed without data augmentation. Part of the test data is used for validation, while another part is reserved for testing.
 
-## معماری U-Net
+## U-Net Architecture
 
-مدل شامل بخش‌های زیر است:
+The model consists of the following components:
 
-- **Encoder:** چهار بلوک Downsampling با تعداد فیلترهای `64`، `128`، `256` و `512`
-- **Bottleneck:** دو لایه‌ی کانولوشن با `1024` فیلتر
-- **Decoder:** چهار بلوک Upsampling به‌همراه Skip Connection
-- **خروجی:** یک لایه‌ی کانولوشن با سه کانال و فعال‌ساز `softmax`
+- **Encoder:** Four downsampling blocks with `64`, `128`, `256`, and `512` filters
+- **Bottleneck:** Two convolutional layers with `1024` filters
+- **Decoder:** Four upsampling blocks with skip connections
+- **Output:** A convolutional layer with three channels and a `softmax` activation function
 
-ساختار کلی مدل:
+Overall model structure:
 
 ```text
 Input (128, 128, 3)
@@ -102,50 +102,50 @@ Input (128, 128, 3)
 Output (128, 128, 3)
 ```
 
-## تنظیمات آموزش
+## Training Configuration
 
-مقادیر فعلی آموزش در فایل `U_net2.py` عبارت‌اند از:
+The current training settings in `U_net2.py` are:
 
-- اندازه‌ی دسته: `64`
-- تعداد دوره‌ها: `20`
-- بهینه‌ساز: `Adam`
-- تابع هزینه: `sparse_categorical_crossentropy`
-- معیار ارزیابی: `accuracy`
-- اندازه‌ی تصاویر: `128×128`
+- Batch size: `64`
+- Number of epochs: `20`
+- Optimizer: `Adam`
+- Loss function: `sparse_categorical_crossentropy`
+- Evaluation metric: `accuracy`
+- Image size: `128×128`
 
-برای تغییر این مقادیر، متغیرهای `BATCH_SIZE` و `NUM_EPOCHS` را در فایل اصلی ویرایش کنید.
+To change these values, edit the `BATCH_SIZE` and `NUM_EPOCHS` variables in the main file.
 
-## خروجی‌ها
+## Outputs
 
-در طول اجرای برنامه:
+During execution:
 
-- خلاصه‌ی معماری مدل در خروجی ترمینال نمایش داده می‌شود.
-- یک تصویر نمونه شامل تصویر ورودی و ماسک واقعی در فایل زیر ذخیره می‌شود:
+- The model architecture summary is displayed in the terminal.
+- A sample image containing the input image and ground-truth mask is saved to:
 
 ```text
 output.png
 ```
 
-تابع `show_predictions` نیز برای نمایش پیش‌بینی مدل روی داده‌های آزمون در کد تعریف شده است.
+The `show_predictions` function is also defined in the code for displaying model predictions on test data.
 
-## نکات مهم
+## Important Notes
 
-- مدل در هر اجرا از ابتدا آموزش داده می‌شود و وزن‌ها به‌صورت خودکار ذخیره نمی‌شوند.
-- برای ادامه‌ی آموزش یا استفاده‌ی مجدد از مدل، می‌توان از `model.save()` و `load_model()` استفاده ��رد.
-- مقدار `validation_batches` از داده‌های آزمون ساخته شده است؛ برای ارزیابی استاندارد بهتر است مجموعه‌ی اعتبارسنجی جداگانه‌ای تعریف شود.
-- قبل از استفاده در محیط تولید، بهتر است معیارهایی مانند IoU، Dice Score و Mean IoU نیز محاسبه شوند.
-- آموزش این مدل با اندازه‌ی batch برابر 64 و تعداد فیلترهای زیاد ممکن است به حافظه‌ی GPU قابل‌توجهی نیاز داشته باشد. در صورت کمبود حافظه، `BATCH_SIZE` را کاهش دهید.
+- The model is trained from scratch each time the script is run, and its weights are not saved automatically.
+- To continue training or reuse the model, you can use `model.save()` and `load_model()`.
+- The `validation_batches` dataset is created from the test data. For a standard evaluation workflow, it is recommended to create a separate validation dataset.
+- Before using the model in production, consider adding metrics such as IoU, Dice Score, and Mean IoU.
+- Training this model with a batch size of `64` and a large number of filters may require a considerable amount of GPU memory. If you run out of memory, reduce the `BATCH_SIZE` value.
 
-## بهبودهای پیشنهادی
+## Suggested Improvements
 
-- ذخیره‌ی بهترین وزن‌ها با `ModelCheckpoint`
-- استفاده از `EarlyStopping`
-- افزودن معیارهای Dice و IoU
-- استفاده از افزایش داده‌های بیشتر مانند چرخش و تغییر روشنایی
-- جداسازی داده‌های آموزش، اعتبارسنجی و آزمون
-- ذخیره‌ی نمودارهای loss و accuracy
-- استفاده از mixed precision برای آموزش سریع‌تر روی GPUهای سازگار
+- Save the best model weights using `ModelCheckpoint`
+- Use `EarlyStopping`
+- Add Dice and IoU metrics
+- Apply additional data augmentation, such as rotation and brightness adjustment
+- Separate the training, validation, and test datasets
+- Save loss and accuracy plots
+- Use mixed precision for faster training on compatible GPUs
 
-## مجوز
+## License
 
-در این مخزن فایل مجوز مشخصی تعریف نشده است. پیش از استفاده یا انتشار مجدد کد، شرایط استفاده از مجموعه‌داده‌ی Oxford-IIIT Pet و مجوز پروژه را بررسی کنید.
+This repository does not currently include a specific license file. Before using or redistributing the code, review the usage terms of the Oxford-IIIT Pet dataset and the license of this project.
